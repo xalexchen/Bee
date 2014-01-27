@@ -20,18 +20,28 @@ public class Bee {
 
     private static final String TAG = "Bee";
     public  static final String MSG = "com.alex.bee.msg";
-    public  static final String EXTRA = "extra";
+    public  static final String BIND = "com.alex.bee.bind";
+
+    public  static final String EXTRA_MSG = "msg";
+    public  static final String EXTRA_USER_ID = "user_id";
+    public  static final String EXTRA_CHANNEL_ID = "channel_id";
 
     private Context context;
     private BeeMessage message;
     private Gson mGson;
     private Object mObject;
+    private String userId;
+    private String channelId;
 
     public interface OnMessageReceiver{
         public void onMessage(Object object);
         public void onError();
     }
+    public interface RegisterCallback {
+        public void bind(String userId,String channelId);
+    }
     private OnMessageReceiver onMessageReveiver;
+    private RegisterCallback registerCallback;
 
     public Bee(Context context){
         this.context = context;
@@ -48,9 +58,20 @@ public class Bee {
                     PushConstants.LOGIN_TYPE_API_KEY,
                     api_key);
 //            PushManager.enableLbs(activity.getApplicationContext());
+        } else {
+            userId = Utils.getUserId(context);
+            channelId = Utils.getChannelId(context);
+            if (registerCallback != null) {
+                registerCallback.bind(userId,channelId);
+            }
         }
     }
-
+    public String getChannelId() {
+        return channelId;
+    }
+    public void setRegisterCallback (RegisterCallback registerCallback) {
+        this.registerCallback = registerCallback;
+    }
     public void setOnReceiveMessageListener(OnMessageReceiver onMessageReveiver,BeeMessage message){
         this.onMessageReveiver = onMessageReveiver;
         this.message = message;
@@ -59,6 +80,7 @@ public class Bee {
         // We use LocalBoardcast forward message
         IntentFilter localFilter = new IntentFilter();
         localFilter.addAction(MSG);
+        localFilter.addAction(BIND);
         LocalBroadcastManager.getInstance(context).registerReceiver(localReceiver, localFilter);
     }
 
@@ -71,12 +93,20 @@ public class Bee {
                     // TODO because string length limit 140 character.can be fast parse it on mainUI thread ?
                     // or make a separate thread ??
                     try {
-                        mObject = mGson.fromJson(intent.getStringExtra(EXTRA),message.getType());
+                        mObject = mGson.fromJson(intent.getStringExtra(EXTRA_MSG),message.getType());
                         onMessageReveiver.onMessage(mObject);
                     } catch (JsonSyntaxException e) {
                         e.printStackTrace();
                         onMessageReveiver.onError();
                     }
+                }
+            } else if (action.equals(BIND)) {
+                userId = intent.getStringExtra(EXTRA_USER_ID);
+                channelId = intent.getStringExtra(EXTRA_CHANNEL_ID);
+                Utils.setUserId(context,userId);
+                Utils.setChannelId(context,channelId);
+                if (registerCallback != null) {
+                    registerCallback.bind(userId,channelId);
                 }
             }
         }

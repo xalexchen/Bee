@@ -36,6 +36,14 @@ public class MainActivity extends ActionBarActivity {
         }
 
         Bee bee = new Bee(this);
+        bee.setRegisterCallback(new Bee.RegisterCallback() {
+
+            @Override
+            public void bind(String userId, String channelId) {
+                getSupportActionBar().setTitle(channelId);
+                getSupportActionBar().setSubtitle(userId);
+            }
+        });
         bee.init();
         bee.setOnReceiveMessageListener(new Bee.OnMessageReceiver() {
             @Override

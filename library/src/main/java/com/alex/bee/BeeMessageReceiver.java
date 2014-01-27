@@ -65,6 +65,10 @@ public class BeeMessageReceiver extends FrontiaPushMessageReceiver {
 				+ appid + " userId=" + userId + " channelId=" + channelId
 				+ " requestId=" + requestId;
 		Log.d(TAG, responseString);
+        Intent intent = new Intent(Bee.BIND);
+        intent.putExtra(Bee.EXTRA_USER_ID,userId);
+        intent.putExtra(Bee.EXTRA_CHANNEL_ID,channelId);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         // TODO handle error,save id etc
 		// 绑定成功，设置已绑定flag，可以有效的减少不必要的绑定请求
 		if (errorCode == 0) {
@@ -85,7 +89,7 @@ public class BeeMessageReceiver extends FrontiaPushMessageReceiver {
 				+ customContentString;
         // TODO Bee message only use message channel as a container,put json format inside
         Intent intent = new Intent(Bee.MSG);
-        intent.putExtra(Bee.EXTRA,message);
+        intent.putExtra(Bee.EXTRA_MSG,message);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
 	}

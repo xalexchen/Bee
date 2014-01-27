@@ -56,7 +56,37 @@ public class Utils {
 		editor.putString("bind_flag", flagStr);
 		editor.commit();
     }
-    
+
+    public static String getStoreValue(Context context,String key) {
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        return sp.getString(key, "");
+    }
+
+    public static void setStoreValue(Context context, String key,String value) {
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        Editor editor = sp.edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
+
+    public static String getUserId(Context context) {
+        return getStoreValue(context,"userId");
+    }
+
+    public static void setUserId(Context context, String id) {
+        setStoreValue(context,"userId",id);
+    }
+
+    public static String getChannelId(Context context) {
+        return getStoreValue(context,"channelId");
+    }
+
+    public static void setChannelId(Context context, String id) {
+        setStoreValue(context,"channelId",id);
+    }
+
 	public static List<String> getTagsList(String originalText) {
 		if (originalText == null || originalText.equals("")) {
 			return null;
