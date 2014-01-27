@@ -20,5 +20,6 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:+'
+    compile 'com.google.code.gson:gson:2.2.4'
     compile project(":library")
 }

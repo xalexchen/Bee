@@ -1,6 +1,7 @@
 package com.alex.sample;
 
 import com.alex.bee.Bee;
+import com.alex.bee.BeeMessage;
 import com.alex.bee.R;
 
 import android.os.Bundle;
@@ -38,11 +39,17 @@ public class MainActivity extends ActionBarActivity {
         bee.init();
         bee.setOnReceiveMessageListener(new Bee.OnMessageReceiver() {
             @Override
-            public void onMessage(String msg) {
-                Log.i(TAG,"Receive message = " + msg);
-                placeholderFragment.updateContent(msg);
+            public void onMessage(Object object) {
+                ChatMessage chatMessage = (ChatMessage) object;
+                Log.i(TAG,"Receive message = " + chatMessage.getUser());
+                placeholderFragment.updateContent(chatMessage.getUser()+ " " + chatMessage.getMessage());
             }
-        });
+
+            @Override
+            public void onError() {
+                Log.i(TAG,"Receive Error");
+            }
+        },new BeeMessage(ChatMessage.class));
 
     }
 

@@ -1,5 +1,8 @@
 package com.alex.bee;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
 
@@ -20,9 +23,13 @@ public class Bee {
     public  static final String EXTRA = "extra";
 
     private Context context;
+    private BeeMessage message;
+    private Gson mGson;
+    private Object mObject;
 
     public interface OnMessageReceiver{
-        public void onMessage(String msg);
+        public void onMessage(Object object);
+        public void onError();
     }
     private OnMessageReceiver onMessageReveiver;
 
@@ -44,8 +51,11 @@ public class Bee {
         }
     }
 
-    public void setOnReceiveMessageListener(OnMessageReceiver onMessageReveiver){
+    public void setOnReceiveMessageListener(OnMessageReceiver onMessageReveiver,BeeMessage message){
         this.onMessageReveiver = onMessageReveiver;
+        this.message = message;
+        mObject = message.newInstance();
+        mGson = new Gson();
         // We use LocalBoardcast forward message
         IntentFilter localFilter = new IntentFilter();
         localFilter.addAction(MSG);
@@ -55,11 +65,18 @@ public class Bee {
     private final BroadcastReceiver localReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // TODO open a thread parse Bee json format.
             final String action = intent.getAction();
             if (action.equals(MSG)){
                 if (onMessageReveiver != null) {
-                    onMessageReveiver.onMessage(intent.getStringExtra(EXTRA));
+                    // TODO because string length limit 140 character.can be fast parse it on mainUI thread ?
+                    // or make a separate thread ??
+                    try {
+                        mObject = mGson.fromJson(intent.getStringExtra(EXTRA),message.getType());
+                        onMessageReveiver.onMessage(mObject);
+                    } catch (JsonSyntaxException e) {
+                        e.printStackTrace();
+                        onMessageReveiver.onError();
+                    }
                 }
             }
         }

@@ -31,7 +31,7 @@
             android:launchMode="singleTask" >
     </activity>
 
-    <receiver android:name="com.alex.bee.receiver.BeeMessageReceiver">
+    <receiver android:name=".BeeMessageReceiver">
         <intent-filter>
             <!-- receive push message -->
             <action android:name="com.baidu.android.pushservice.action.MESSAGE" />

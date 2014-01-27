@@ -1,20 +1,12 @@
-package com.alex.bee.receiver;
+package com.alex.bee;
 
-import com.alex.bee.Bee;
-import com.alex.bee.Utils;
 import com.baidu.frontia.api.FrontiaPushMessageReceiver;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
 import android.util.Log;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**
