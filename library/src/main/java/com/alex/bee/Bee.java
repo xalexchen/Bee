@@ -6,12 +6,20 @@ import com.google.gson.JsonSyntaxException;
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.json.GsonHttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+
+import java.util.Collections;
 
 /**
  * Created by Alex on 1/27/14.
@@ -32,6 +40,19 @@ public class Bee {
     private Object mObject;
     private String userId;
     private String channelId;
+
+    private final HttpHeaders requestHeaders;
+    private final RestTemplate restTemplate;
+
+    {
+        requestHeaders = new HttpHeaders();
+        requestHeaders.setAccept(Collections.singletonList(new MediaType("application", "json")));
+        restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
+        SimpleClientHttpRequestFactory factory = (SimpleClientHttpRequestFactory)restTemplate.getRequestFactory();
+        factory.setConnectTimeout(5*1000);
+        factory.setReadTimeout(3*1000);
+    }
 
     public interface OnMessageReceiver{
         public void onMessage(Object object);
@@ -66,6 +87,7 @@ public class Bee {
             }
         }
     }
+
     public String getChannelId() {
         return channelId;
     }
