@@ -35,13 +35,30 @@ public class MainActivity extends ActionBarActivity {
                     .commit();
         }
 
-        Bee bee = new Bee(this);
+        final Bee bee = new Bee(this);
         bee.setRegisterCallback(new Bee.RegisterCallback() {
 
             @Override
             public void bind(String userId, String channelId) {
                 getSupportActionBar().setTitle(channelId);
                 getSupportActionBar().setSubtitle(userId);
+                final String id = userId;
+                final String channelid = channelId;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        ChatMessage message = new ChatMessage();
+                        message.setMessage("Hello forks,this message send from myself");
+                        message.setUser(id);
+                        bee.sendMessage(message, channelid, id);
+                    }
+                }).start();
+
             }
         });
         bee.init();

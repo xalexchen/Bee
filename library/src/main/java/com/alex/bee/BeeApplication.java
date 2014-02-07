@@ -1,4 +1,4 @@
-package com.alex.sample;
+package com.alex.bee;
 
 import com.baidu.frontia.FrontiaApplication;
 

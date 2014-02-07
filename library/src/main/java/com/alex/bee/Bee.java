@@ -6,20 +6,12 @@ import com.google.gson.JsonSyntaxException;
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.http.converter.json.GsonHttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-
-import java.util.Collections;
 
 /**
  * Created by Alex on 1/27/14.
@@ -40,19 +32,7 @@ public class Bee {
     private Object mObject;
     private String userId;
     private String channelId;
-
-    private final HttpHeaders requestHeaders;
-    private final RestTemplate restTemplate;
-
-    {
-        requestHeaders = new HttpHeaders();
-        requestHeaders.setAccept(Collections.singletonList(new MediaType("application", "json")));
-        restTemplate = new RestTemplate();
-        restTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
-        SimpleClientHttpRequestFactory factory = (SimpleClientHttpRequestFactory)restTemplate.getRequestFactory();
-        factory.setConnectTimeout(5*1000);
-        factory.setReadTimeout(3*1000);
-    }
+    private BeePush mPush;
 
     public interface OnMessageReceiver{
         public void onMessage(Object object);
@@ -61,11 +41,13 @@ public class Bee {
     public interface RegisterCallback {
         public void bind(String userId,String channelId);
     }
+
     private OnMessageReceiver onMessageReveiver;
     private RegisterCallback registerCallback;
 
     public Bee(Context context){
         this.context = context;
+        mPush = new BeePush(context);
     }
     public void init () {
         String key = Utils.getMetaValue(context, "api_key");
@@ -88,6 +70,9 @@ public class Bee {
         }
     }
 
+    public void sendMessage(Object message,String channelid,String userid){
+        mPush.PushMessage(message,channelid,userid);
+    }
     public String getChannelId() {
         return channelId;
     }
@@ -114,6 +99,7 @@ public class Bee {
                 if (onMessageReveiver != null) {
                     // TODO because string length limit 140 character.can be fast parse it on mainUI thread ?
                     // or make a separate thread ??
+                    Log.i(TAG,"msg = " + intent.getStringExtra(EXTRA_MSG));
                     try {
                         mObject = mGson.fromJson(intent.getStringExtra(EXTRA_MSG),message.getType());
                         onMessageReveiver.onMessage(mObject);
