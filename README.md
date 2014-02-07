@@ -8,20 +8,23 @@ Principle and Goal
 Baidu cloud platform support pushing message directly to a single end user if we know the userid and channelid.
 it's already provide sending transparent message (140 characters limit)
   
-We simply use this channel as a container.we put our message into a JSON object,you can encrypt it or
+We simply use this channel as a container.we put our message into a `JSON` object,you can encrypt it or
 not. send it over Baidu cloud platform.the receiver use the same technologies to decode it back.
 
 Usage
 ===
-1. Add Bee library modules a dependency to your existing project.
-2. If your project already in inheritance 'Application' class.use 'BeeApplication' instead.
-3. Add secret_key and api_key into your Androidmainfest.xml file.
+1. Add `Bee` library modules as dependency to your existing project.
+2. If your project already in inheritance `Application` class.use `BeeApplication` instead.
+3. Add `secret_key` and `api_key` into your `Androidmainfest.xml` file.
+```
     <meta-data android:name="api_key" android:value="Your api_key" />
     <meta-data android:name="secret_key" android:value="Your secret_key" />
+```
 
 Simple Example
 ==
-public class MainActivity extends Activity {
+```
+ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,11 +53,34 @@ public class MainActivity extends Activity {
                 Log.i(TAG,"Receive Error");
             }
         },new BeeMessage(ChatMessage.class));
-}
+ }
+```
+```
+  public class ChatMessage {
+      private String user;
+      private String message;
+  
+      public String getUser() {
+          return user;
+      }
+  
+      public void setUser(String user) {
+          this.user = user;
+      }
+  
+      public String getMessage() {
+          return message;
+      }
+  
+      public void setMessage(String message) {
+          this.message = message;
+      }
+  }
+```
 
 Pull Requests
 ===
-  i still work on progress and try to fix the bug and make it easy to use.also gladly accept pull requests
+  i still working on progress to fix the bug and make it easy to use.also gladly accept pull requests
 
 License
 ===
