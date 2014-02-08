@@ -7,18 +7,21 @@ repositories {
     }
 }
 android {
-    compileSdkVersion 18
-    buildToolsVersion "19.0.1"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
     packagingOptions {
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/license.txt'
     }
+
     defaultConfig {
-        minSdkVersion 7
-        targetSdkVersion 16
-        versionCode 1
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 2
         versionName "0.0.1"
     }
+
     release {
         runProguard false
         proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
